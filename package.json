@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node_modules/react-native/packager/packager.sh"
+    "start": "node_modules/react-native/packager/packager.sh",
+    "postinstall": "./node_modules/rn-nodeify/cmd.js --extra"
   },
   "dependencies": {
     "assert": "^1.3.0",
@@ -64,5 +65,8 @@
     "timers": "timers-browserify",
     "tty": "tty-browserify",
     "vm": "vm-browserify"
+  },
+  "devDependencies": {
+    "rn-nodeify": "^1.4.0"
   }
 }

@@ -5,6 +5,7 @@
 'use strict';
 
 require('./shim')
+require('./crypto')
 require('stream')
 var crypto = require('crypto')
 var EventEmitter = require('events').EventEmitter
