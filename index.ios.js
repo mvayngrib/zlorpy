@@ -25,18 +25,12 @@ var {
   TextInput
 } = React;
 
+var port = Number(process.argv[2]) || 55555
 var bill = require('./bill-priv')
 bill.name = 'bill'
 var ted = require('./ted-priv')
 ted.name = 'ted'
 var msgEmitter = new EventEmitter()
-var dht = new DHT({
-  bootstrap: ['tradle.io:25778'],
-  nodeId: getNodeId(me)
-})
-
-var port = Number(process.argv[2]) || 55555
-dht.listen(port)
 
 // setInterval(function () {
 //   msgEmitter.emit('data', 'hey')
@@ -52,6 +46,13 @@ function getNodeId (key) {
 var zlorpy = React.createClass({
   chooseIdentity: function (me) {
     var them = me === bill ? ted : bill
+    var dht = new DHT({
+      bootstrap: ['tradle.io:25778'],
+      nodeId: getNodeId(me)
+    })
+
+    dht.listen(port)
+
     var z = new Zlorp({
       leveldown: leveldown,
       dht: dht,
