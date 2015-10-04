@@ -30,7 +30,11 @@ bill.name = 'bill'
 var ted = require('./ted-priv')
 ted.name = 'ted'
 var msgEmitter = new EventEmitter()
-var dht = new DHT({ bootstrap: ['tradle.io:25778'] })
+var dht = new DHT({
+  bootstrap: ['tradle.io:25778'],
+  nodeId: getNodeId(me)
+})
+
 var port = Number(process.argv[2]) || 55555
 dht.listen(port)
 
@@ -51,8 +55,7 @@ var zlorpy = React.createClass({
     var z = new Zlorp({
       leveldown: leveldown,
       dht: dht,
-      key: kiki.toKey(me),
-      nodeId: getNodeId(me)
+      key: kiki.toKey(me)
     })
 
     z.on('data', function () {
