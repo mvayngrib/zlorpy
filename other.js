@@ -1,4 +1,5 @@
 
+var crypto = require('crypto')
 var EventEmitter = require('events').EventEmitter
 var leveldown = require('memdown')
 var DHT = require('bittorrent-dht')
@@ -9,7 +10,13 @@ var kiki = require('kiki')
 var bill = require('./bill-priv')
 var ted = require('./ted-priv')
 var msgEmitter = new EventEmitter()
-var dht = new DHT({ bootstrap: ['tradle.io:25778'] })
+var me = bill
+var them = ted
+var dht = new DHT({
+  bootstrap: ['tradle.io:25778'],
+  nodeId: getNodeId(me)
+})
+
 var port = Number(process.argv[2]) || 50162
 dht.listen(port)
 
@@ -17,13 +24,10 @@ dht.listen(port)
 //   msgEmitter.emit('data', 'hey')
 // }, 2000)
 
-var me = bill
-var them = ted
 var z = new Zlorp({
   leveldown: leveldown,
   dht: dht,
-  key: kiki.toKey(me),
-  nodeId: getNodeId(me)
+  key: kiki.toKey(me)
 })
 
 z.on('data', function (msg) {
