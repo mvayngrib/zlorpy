@@ -1,57 +1,112 @@
-
 var crypto = require('crypto')
-var EventEmitter = require('events').EventEmitter
+var exitHook = require('exit-hook')
+var split = require('split')
+var Node = require('zlorp')
+Node.ANNOUNCE_INTERVAL = 5000
+Node.LOOKUP_INTERVAL = 5000
+var privKeys = require('./priv')
 var leveldown = require('memdown')
 var DHT = require('bittorrent-dht')
-var Zlorp = require('zlorp')
-Zlorp.ANNOUNCE_INTERVAL = 5000
-Zlorp.LOOKUP_INTERVAL = 5000
-var kiki = require('kiki')
-var bill = require('./bill-priv')
-var ted = require('./ted-priv')
-var msgEmitter = new EventEmitter()
-var me = bill
-var them = ted
-var dht = new DHT({
-  bootstrap: ['tradle.io:25778'],
-  nodeId: getNodeId(me)
+var dns = require('dns')
+var DSA = Node.DSA
+var myName = process.argv[2]
+var tradleIp
+if (!privKeys[myName]) throw new Error('no key found for ' + name)
+
+var fingerprints = {}
+
+for (var name in privKeys) {
+  var key = privKeys[name] = DSA.parsePrivate(privKeys[name])
+  fingerprints[name] = key.fingerprint()
+}
+
+dns.lookup('tradle.io', function (err, address) {
+  if (err) throw err
+
+  start(address)
 })
 
-var port = Number(process.argv[2]) || 50162
-dht.listen(port)
+function start (relayIP) {
+  var node = new Node({
+    key: privKeys[myName],
+    port: process.argv[3] ? Number(process.argv[3]) : undefined,
+    leveldown: leveldown,
+    relay: {
+      address: relayIP,
+      port: 25778
+    },
+    dht: new DHT({
+      nodeId: getNodeId(fingerprints[myName]),
+      bootstrap: ['tradle.io:25778']
+    })
+  })
 
-// setInterval(function () {
-//   msgEmitter.emit('data', 'hey')
-// }, 2000)
+  var others = Object.keys(privKeys).filter(function (n) {
+    return n !== myName
+  })
 
-var z = new Zlorp({
-  leveldown: leveldown,
-  dht: dht,
-  key: kiki.toKey(me)
-})
+  others.forEach(function (name) {
+    var otherfinger = fingerprints[name]
+    node.contact({
+      fingerprint: otherfinger,
+      name: name
+    })
 
-z.on('data', function (msg) {
-  console.log(them.fingerprint + ': ' + msg)
-})
+    node.on('connect', function (info) {
+      if (info.fingerprint === otherfinger) {
+        console.log('Tell ' + name + ' how you feel')
+      }
+    })
+  })
 
-z.contact({
-  fingerprint: them.fingerprint
-})
+  process.openStdin()
+    .pipe(split())
+    .on('data', function (line) {
+      others.forEach(function (name) {
+        node.send(toBuffer(line), fingerprints[name])
+      })
+    })
 
-// var send = z.send
-// z.send = function (msg) {
-//   console.log(me.fingerprint + ': ' + msg)
-//   return send.apply(this, arguments)
+  node.on('data', function (data, from) {
+    for (var name in fingerprints) {
+      if (fingerprints[name] === from) {
+        console.log(name + ': ' + data.toString())
+      }
+    }
+  })
+
+  exitHook(node.destroy.bind(node))
+}
+
+function toBuffer (str) {
+  if (Buffer.isBuffer(str)) return str
+
+  return new Buffer(str)
+}
+
+// process.on('exit', exitHandler.bind(null, { cleanup:true }))
+
+// //catches ctrl+c event
+// process.on('SIGINT', exitHandler.bind(null, { exit:true }))
+
+// //catches uncaught exceptions
+// process.on('uncaughtException', exitHandler.bind(null, { exit:true }))
+
+// function exitHandler(options, err) {
+//   if (err) console.log(err.stack)
+
+//   node.destroy(exit)
+//   var timeoutId = setTimeout(exit, 5000)
+
+//   function exit() {
+//     clearTimeout(timeoutId)
+//     if (options.exit) process.exit()
+//   }
 // }
 
-process.stdin.resume()
-process.stdin.on('data', function (data) {
-  z.send(data, them.fingerprint)
-})
-
-function getNodeId (key) {
+function getNodeId (fingerprint) {
   return crypto.createHash('sha256')
-    .update(key.fingerprint)
+    .update(fingerprint)
     .digest()
     .slice(0, 20)
 }

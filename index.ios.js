@@ -7,6 +7,8 @@
 require('./shim')
 require('./crypto')
 require('stream')
+var debug = require('debug')
+debug.log = console.log.bind(console)
 var crypto = require('crypto')
 var EventEmitter = require('events').EventEmitter
 var leveldown = require('asyncstorage-down')
@@ -14,6 +16,7 @@ var DHT = require('bittorrent-dht')
 var Zlorp = require('zlorp')
 Zlorp.ANNOUNCE_INTERVAL = 5000
 Zlorp.LOOKUP_INTERVAL = 5000
+var DSA = Zlorp.DSA
 var kiki = require('kiki')
 var React = require('react-native');
 var {
@@ -26,29 +29,28 @@ var {
 } = React;
 
 var port = Number(process.argv[2]) || 55555
-var bill = require('./bill-priv')
-bill.name = 'bill'
-var ted = require('./ted-priv')
-ted.name = 'ted'
-var msgEmitter = new EventEmitter()
+var tradleIp
+var privKeys = require('./priv')
+var fingerprints = {}
+for (var name in privKeys) {
+  var key = privKeys[name] = DSA.parsePrivate(privKeys[name])
+  fingerprints[name] = key.fingerprint()
+}
 
-// setInterval(function () {
-//   msgEmitter.emit('data', 'hey')
-// }, 2000)
-
-function getNodeId (key) {
+function getNodeId (fingerprint) {
   return crypto.createHash('sha256')
-    .update(key.fingerprint)
+    .update(fingerprint)
     .digest()
     .slice(0, 20)
 }
 
 var zlorpy = React.createClass({
   chooseIdentity: function (me) {
-    var them = me === bill ? ted : bill
+    var self = this
+    var them = me === 'bill' ? 'ted' : 'bill'
     var dht = new DHT({
-      bootstrap: ['tradle.io:25778'],
-      nodeId: getNodeId(me)
+      bootstrap: ['54.236.214.150:25778'],
+      nodeId: getNodeId(fingerprints[me])
     })
 
     dht.listen(port)
@@ -56,15 +58,29 @@ var zlorpy = React.createClass({
     var z = new Zlorp({
       leveldown: leveldown,
       dht: dht,
-      key: kiki.toKey(me)
+      key: privKeys[me],
+      port: port,
+      relay: {
+        address: 'tradle.io:25778',
+        port: 25778
+      }
     })
 
-    z.on('data', function () {
-      msgEmitter.emit('data', data)
+    z.on('data', function (data) {
+      if (self.state.them) {
+        self.addMessage(self.state.them, data.toString())
+      }
     })
 
     z.contact({
-      fingerprint: them.fingerprint
+      fingerprint: fingerprints[them]
+    })
+
+    z.on('connect', function (info) {
+      if (info.fingerprint === otherfinger) {
+        self.state.msgs[0] = 'Tell ' + name + ' how you feel'
+        self.setState(self.state)
+      }
     })
 
     var state = this.state
@@ -75,6 +91,27 @@ var zlorpy = React.createClass({
       node: z
     })
   },
+  // componentWillMount: function () {
+  //   var self = this
+  //   var logged = false
+  //   ;['log', 'debug', 'error'].forEach(function (method) {
+  //     var orig = console[method]
+  //     console[method] = function () {
+  //       debugger
+  //       var msg = 'LOG: ' + [].join.apply(arguments, ' ')
+  //       self.state.msgs.push(msg)
+  //       if (!logged) {
+  //         logged = true
+  //         process.nextTick(function () {
+  //           logged = false
+  //           self.setState(self.state)
+  //         })
+  //       }
+
+  //       return orig.apply(console, arguments)
+  //     }
+  //   })
+  // },
   addMessage: function (from, msg) {
     this.state.msgs.push(from + ': ' + msg)
     this.setState(this.state)
@@ -84,19 +121,11 @@ var zlorpy = React.createClass({
       msgs: ['Nothing here yet']
     }
   },
-  componentWillMount: function () {
-    var self = this
-    msgEmitter.on('data', function (data) {
-      if (self.state.them) {
-        self.addMessage(self.state.them.name, data)
-      }
-    })
-  },
   onSubmit: function (msg) {
     msg = msg.nativeEvent.text
     this.state.text = ''
-    this.addMessage(this.state.me.name, msg)
-    this.state.node.send(msg, this.state.them.fingerprint)
+    this.addMessage(this.state.me, msg)
+    this.state.node.send(new Buffer(msg), fingerprints[this.state.them])
   },
   onType: function (msg) {
     this.state.text = msg
@@ -107,12 +136,12 @@ var zlorpy = React.createClass({
       <View>
         <TouchableHighlight
           // style={styles.button}
-          onPress={this.chooseIdentity.bind(this, bill)}>
+          onPress={this.chooseIdentity.bind(this, 'bill')}>
             <Text style={styles.buttonText}>Bill</Text>
         </TouchableHighlight>
         <TouchableHighlight
           // style={styles.button}
-          onPress={this.chooseIdentity.bind(this, ted)}>
+          onPress={this.chooseIdentity.bind(this, 'ted')}>
             <Text style={styles.buttonText}>Ted</Text>
         </TouchableHighlight>
       </View>
