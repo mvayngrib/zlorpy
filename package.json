@@ -32,7 +32,7 @@
     "react-native": "facebook/react-native#v0.11.0",
     "react-native-http": "tradle/react-native-http#834492d",
     "react-native-level-fs": "^1.0.3",
-    "react-native-udp": "^1.0.2",
+    "react-native-udp": "^1.0.3",
     "readable-stream": "^1.0.33",
     "sock-plex": "^1.0.2",
     "split": "^1.0.0",
