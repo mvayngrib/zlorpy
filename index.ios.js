@@ -28,7 +28,6 @@ var {
   TextInput
 } = React;
 
-var port = Number(process.argv[2]) || 55555
 var tradleIp = '54.236.214.150'
 var privKeys = require('./priv')
 var fingerprints = {}
@@ -53,6 +52,7 @@ var zlorpy = React.createClass({
       nodeId: getNodeId(fingerprints[me])
     })
 
+    var port = me === 'bill' ? 55555 : 55556
     dht.listen(port)
 
     var z = new Zlorp({
