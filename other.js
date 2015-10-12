@@ -1,4 +1,5 @@
 var crypto = require('crypto')
+var randomBytes = require('./crypto').randomBytes
 var exitHook = require('exit-hook')
 var split = require('split')
 var Node = require('zlorp')
@@ -8,6 +9,8 @@ var privKeys = require('./priv')
 var leveldown = require('memdown')
 var DHT = require('bittorrent-dht')
 var dns = require('dns')
+// var BigInt = require('kiki/node_modules/otr/vendor/bigint')
+
 var DSA = Node.DSA
 var myName = process.argv[2]
 var tradleIp

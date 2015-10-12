@@ -29,7 +29,7 @@ var {
 } = React;
 
 var port = Number(process.argv[2]) || 55555
-var tradleIp
+var tradleIp = '54.236.214.150'
 var privKeys = require('./priv')
 var fingerprints = {}
 for (var name in privKeys) {
@@ -49,7 +49,7 @@ var zlorpy = React.createClass({
     var self = this
     var them = me === 'bill' ? 'ted' : 'bill'
     var dht = new DHT({
-      bootstrap: ['54.236.214.150:25778'],
+      bootstrap: [tradleIp + ':25778'],
       nodeId: getNodeId(fingerprints[me])
     })
 
@@ -61,7 +61,7 @@ var zlorpy = React.createClass({
       key: privKeys[me],
       port: port,
       relay: {
-        address: 'tradle.io:25778',
+        address: tradleIp,
         port: 25778
       }
     })
@@ -77,7 +77,7 @@ var zlorpy = React.createClass({
     })
 
     z.on('connect', function (info) {
-      if (info.fingerprint === otherfinger) {
+      if (info.fingerprint === fingerprints[them]) {
         self.state.msgs[0] = 'Tell ' + name + ' how you feel'
         self.setState(self.state)
       }

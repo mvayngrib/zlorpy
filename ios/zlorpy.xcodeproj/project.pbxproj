@@ -22,7 +22,7 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
-		73430A681BC1732900FF7BC1 /* libUdpSockets.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 73430A671BC1732100FF7BC1 /* libUdpSockets.a */; };
+		735BC00E1BCADF71003D8709 /* libUdpSockets.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 735BC00D1BCADF69003D8709 /* libUdpSockets.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 /* End PBXBuildFile section */
 
@@ -90,9 +90,9 @@
 			remoteGlobalIDString = 83CBBA2E1A601D0E00E9B192;
 			remoteInfo = React;
 		};
-		73430A661BC1732100FF7BC1 /* PBXContainerItemProxy */ = {
+		735BC00C1BCADF69003D8709 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 73430A581BC1732100FF7BC1 /* UdpSockets.xcodeproj */;
+			containerPortal = 735BC0081BCADF69003D8709 /* UdpSockets.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = UdpSockets;
@@ -133,7 +133,7 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = zlorpy/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = zlorpy/main.m; sourceTree = "<group>"; };
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
-		73430A581BC1732100FF7BC1 /* UdpSockets.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UdpSockets.xcodeproj; path = "../node_modules/react-native-udp/UdpSockets.xcodeproj"; sourceTree = "<group>"; };
+		735BC0081BCADF69003D8709 /* UdpSockets.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UdpSockets.xcodeproj; path = "../node_modules/react-native-udp/ios/UdpSockets.xcodeproj"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -160,7 +160,7 @@
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
-				73430A681BC1732900FF7BC1 /* libUdpSockets.a in Frameworks */,
+				735BC00E1BCADF71003D8709 /* libUdpSockets.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,10 +262,10 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		73430A591BC1732100FF7BC1 /* Products */ = {
+		735BC0091BCADF69003D8709 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				73430A671BC1732100FF7BC1 /* libUdpSockets.a */,
+				735BC00D1BCADF69003D8709 /* libUdpSockets.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -281,7 +281,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				73430A581BC1732100FF7BC1 /* UdpSockets.xcodeproj */,
+				735BC0081BCADF69003D8709 /* UdpSockets.xcodeproj */,
 				146833FF1AC3E56700842450 /* React.xcodeproj */,
 				00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */,
 				00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */,
@@ -431,8 +431,8 @@
 					ProjectRef = 146833FF1AC3E56700842450 /* React.xcodeproj */;
 				},
 				{
-					ProductGroup = 73430A591BC1732100FF7BC1 /* Products */;
-					ProjectRef = 73430A581BC1732100FF7BC1 /* UdpSockets.xcodeproj */;
+					ProductGroup = 735BC0091BCADF69003D8709 /* Products */;
+					ProjectRef = 735BC0081BCADF69003D8709 /* UdpSockets.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -500,11 +500,11 @@
 			remoteRef = 146834031AC3E56700842450 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		73430A671BC1732100FF7BC1 /* libUdpSockets.a */ = {
+		735BC00D1BCADF69003D8709 /* libUdpSockets.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libUdpSockets.a;
-			remoteRef = 73430A661BC1732100FF7BC1 /* PBXContainerItemProxy */;
+			remoteRef = 735BC00C1BCADF69003D8709 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		78C398B91ACF4ADC00677621 /* libRCTLinking.a */ = {
